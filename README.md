@@ -10,6 +10,8 @@
 # Ligature
 A Swift package to aid in text selection, grouping, indentation, and manipulation.
 
+Ligature includes aliases and implemenations as needed to make parts of the UIKit and AppKit text interfaces source-compatible.
+
 > [!WARNING]
 > This is currently very WIP.
 
@@ -19,6 +21,16 @@ A Swift package to aid in text selection, grouping, indentation, and manipulatio
 dependencies: [
     .package(url: "https://github.com/ChimeHQ/Ligature", branch: "main")
 ],
+```
+
+## Usage
+
+```swift
+// on UIKit
+let tokenizer = TextInputStringTokenizer(textInput: someUITextView)
+
+// with AppKit
+let tokenizer = TextInputStringTokenizer(textInput: someNSTextInputClient)
 ```
 
 ## Contributing and Collaboration
