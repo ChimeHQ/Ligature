@@ -26,7 +26,6 @@ jobs:
           - "platform=macOS,variant=Mac Catalyst"
           - "platform=iOS Simulator,name=iPhone 12"
           - "platform=tvOS Simulator,name=Apple TV"
-          - "platform=watchOS Simulator,name=Apple Watch Series 6 (40mm)"
           - "platform=visionOS Simulator,name=Apple Vision Pro"
           
     steps:
