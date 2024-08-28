@@ -51,6 +51,21 @@ extension NSSelectionGranularity {
 	}
 }
 
+@available(macOS 12.0, *)
+extension NSTextSelection.Affinity {
+	public init(_ affinity: NSSelectionAffinity) {
+		switch affinity {
+		case .downstream:
+			self = .downstream
+		case .upstream:
+			self = .upstream
+		@unknown default:
+			assertionFailure("Unhandled affinity")
+			self = .downstream
+		}
+	}
+}
+
 public enum TextStorageDirection : Int {
 	case forward = 0
 	case backward = 1
@@ -158,3 +173,24 @@ public typealias TextDirection = UITextDirection
 public typealias TextInputStringTokenizer = UITextInputStringTokenizer
 
 #endif
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(watchOS, unavailable)
+extension NSTextSelection.Granularity {
+	public init(_ granularity: TextGranularity) {
+		switch granularity {
+		case .character:
+			self = .character
+		case .paragraph:
+			self = .paragraph
+		case .word:
+			self = .word
+		case .sentence:
+			self = .sentence
+		case .line:
+			self = .line
+		case .document:
+			self = .paragraph
+		}
+	}
+}
