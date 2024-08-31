@@ -1,7 +1,6 @@
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+#if os(macOS)
 import AppKit
 
-@MainActor
 open class TextPosition: NSObject {
 
 }
@@ -191,6 +190,8 @@ extension NSTextSelection.Granularity {
 			self = .line
 		case .document:
 			self = .paragraph
+		@unknown default:
+			self = .character
 		}
 	}
 }

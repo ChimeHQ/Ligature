@@ -1,8 +1,9 @@
 import Foundation
 
 @MainActor
-public protocol TextTokenizer<Position> {
-	associatedtype Position : TextPosition
+public protocol TextTokenizer<Position, TextRange> {
+	associatedtype Position
+	associatedtype TextRange
 
 	func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Position?
 	func rangeEnclosingPosition(_ position: Position, with granularity: TextGranularity, inDirection direction: TextDirection) -> TextRange?
