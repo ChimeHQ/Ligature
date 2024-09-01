@@ -1,6 +1,8 @@
 #if os(macOS)
 import AppKit
 
+public typealias UserInterfaceLayoutDirection = NSUserInterfaceLayoutDirection
+
 open class TextPosition: NSObject {
 
 }
@@ -170,6 +172,7 @@ public typealias TextGranularity = UITextGranularity
 public typealias TextStorageDirection = UITextStorageDirection
 public typealias TextDirection = UITextDirection
 public typealias TextInputStringTokenizer = UITextInputStringTokenizer
+public typealias UserInterfaceLayoutDirection = UIUserInterfaceLayoutDirection
 
 #endif
 
