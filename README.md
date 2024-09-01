@@ -10,10 +10,16 @@
 # Ligature
 A Swift package to aid in text selection, grouping, indentation, and manipulation.
 
-Ligature includes aliases and implemenations as needed to make parts of the UIKit and AppKit text interfaces source-compatible.
+Ligature includes aliases and implementations as needed to make parts of the UIKit and AppKit text interfaces source-compatible.
 
 > [!WARNING]
 > This is currently very WIP.
+
+You also might be interested in [Glyph][], a TextKit 1/2 abstraction system, as well as general AppKit/UIKit stuff like [NSUI][] or [KeyCodes][].
+
+[Glyph]: https://github.com/ChimeHQ/Glyph
+[NSUI]: https://github.com/mattmassicotte/NSUI
+[KeyCodes]: https://github.com/ChimeHQ/KeyCodes
 
 ## Installation
 
@@ -25,12 +31,25 @@ dependencies: [
 
 ## Usage
 
+The core protocol for the tokenization functionality is `TextTokenizer`. It is a little more abstract than `UITextInputTokenizer`, but ultimately compatible. With UIKit, `TextInputStringTokenizer` is just a typealias for `UITextInputStringTokenizer`. Ligature provides an implementation for use with AppKit.
+
 ```swift
 // on UIKit
 let tokenizer = TextInputStringTokenizer(textInput: someUITextView)
 
 // with AppKit
 let tokenizer = TextInputStringTokenizer(textInput: someNSTextInputClient)
+```
+
+Ligature uses platform-independent aliases to represent many text-related structures. For the most part, these are based on their UIKit representations. Typically, AppKit doesn't have a source-compatible implementation, so wrappers and/or compatible implementations are provided.
+
+```swift
+typealias TextPosition = UITextPosition
+typealias TextRange = UITextRange
+typealias TextGranularity = UITextGranularity
+typealias TextStorageDirection = UITextStorageDirection
+typealias TextDirection = UITextDirection
+typealias UserInterfaceLayoutDirection = UIUserInterfaceLayoutDirection
 ```
 
 ## Contributing and Collaboration
