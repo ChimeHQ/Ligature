@@ -31,7 +31,7 @@ open class TextRange: NSObject {
 }
 
 /// Matches the implementation of `UITextGranularity`.
-public enum TextGranularity : Int, Sendable {
+public enum TextGranularity : Int, Sendable, Hashable, Codable {
 	case character = 0
 	case word = 1
 	case sentence = 2
@@ -67,12 +67,12 @@ extension NSTextSelection.Affinity {
 	}
 }
 
-public enum TextStorageDirection : Int {
+public enum TextStorageDirection : Int, Sendable, Hashable, Codable {
 	case forward = 0
 	case backward = 1
 }
 
-public enum TextLayoutDirection : Int {
+public enum TextLayoutDirection : Int, Sendable, Hashable, Codable {
 	case right = 2
 	case left = 3
 	case up = 4
@@ -80,7 +80,7 @@ public enum TextLayoutDirection : Int {
 }
 
 /// Matches the implementation of `UITextDirection`.
-public struct TextDirection : Hashable, Equatable, RawRepresentable {
+public struct TextDirection : RawRepresentable, Hashable, Sendable {
 	public var rawValue: Int
 	
 	public init?(rawValue: Int) {
