@@ -25,6 +25,11 @@ open class TextRange: NSObject {
 		self.end = UTF16TextPosition(value: 0)
 	}
 
+	init(start: TextPosition, end: TextPosition) {
+		self.start = start
+		self.end = end
+	}
+
 	var isEmpty: Bool {
 		return true
 	}
@@ -195,6 +200,23 @@ extension NSTextSelection.Granularity {
 			self = .paragraph
 		@unknown default:
 			self = .character
+		}
+	}
+
+	public var textGranularity: TextGranularity {
+		switch self {
+		case .character:
+			.character
+		case .line:
+			.line
+		case .paragraph:
+			.paragraph
+		case .sentence:
+			.sentence
+		case .word:
+			.word
+		@unknown default:
+			.character
 		}
 	}
 }
