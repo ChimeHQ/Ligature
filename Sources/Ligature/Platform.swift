@@ -88,20 +88,20 @@ public enum TextLayoutDirection : Int, Sendable, Hashable, Codable {
 public struct TextDirection : RawRepresentable, Hashable, Sendable {
 	public var rawValue: Int
 	
-	public init?(rawValue: Int) {
+	public init(rawValue: Int) {
 		if rawValue < 0 || rawValue > 5 {
-			return nil
+			fatalError("invalid direction value")
 		}
 
 		self.rawValue = rawValue
 	}
 
 	public static func storage(_ direction: TextStorageDirection) -> TextDirection {
-		TextDirection(rawValue: direction.rawValue)!
+		TextDirection(rawValue: direction.rawValue)
 	}
 
 	public static func layout(_ direction: TextLayoutDirection) -> TextDirection {
-		TextDirection(rawValue: direction.rawValue)!
+		TextDirection(rawValue: direction.rawValue)
 	}
 }
 
@@ -175,6 +175,7 @@ public typealias TextPosition = UITextPosition
 public typealias TextRange = UITextRange
 public typealias TextGranularity = UITextGranularity
 public typealias TextStorageDirection = UITextStorageDirection
+public typealias TextLayoutDirection = UITextLayoutDirection
 public typealias TextDirection = UITextDirection
 public typealias TextInputStringTokenizer = UITextInputStringTokenizer
 public typealias UserInterfaceLayoutDirection = UIUserInterfaceLayoutDirection

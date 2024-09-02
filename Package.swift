@@ -23,7 +23,6 @@ let package = Package(
 let swiftSettings: [SwiftSetting] = [
 	.enableExperimentalFeature("StrictConcurrency"),
 	.enableUpcomingFeature("DisableOutwardActorInference"),
-	.enableUpcomingFeature("IsolatedDefaultValues"),
 ]
 
 for target in package.targets {
