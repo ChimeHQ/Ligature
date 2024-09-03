@@ -1,6 +1,8 @@
 import Foundation
 
-public struct SourceTokenizer<Position, FallbackTokenzier: TextTokenizer> where FallbackTokenzier.Position == Position, FallbackTokenzier.TextRange == TextRange {
+public struct SourceTokenizer<FallbackTokenzier: TextTokenizer> {
+	public typealias Position = FallbackTokenzier.Position
+
 	private let fallbackTokenzier: FallbackTokenzier
 
 	init(fallbackTokenzier: FallbackTokenzier) {
@@ -13,7 +15,7 @@ extension SourceTokenizer : TextTokenizer {
 		return fallbackTokenzier.position(from: position, toBoundary: granularity, inDirection: direction)
 	}
 
-	public func rangeEnclosingPosition(_ position: Position, with granularity: TextGranularity, inDirection direction: TextDirection) -> Ligature.TextRange? {
+	public func rangeEnclosingPosition(_ position: Position, with granularity: TextGranularity, inDirection direction: TextDirection) -> FallbackTokenzier.TextRange? {
 		return fallbackTokenzier.rangeEnclosingPosition(position, with: granularity, inDirection: direction)
 	}
 

@@ -52,19 +52,7 @@ typealias TextDirection = UITextDirection
 typealias UserInterfaceLayoutDirection = UIUserInterfaceLayoutDirection
 ```
 
-There are a variety of range/position models within AppKit, UIKit, and even between TextKit 1 and 2. Some abstraction is, unfortunately, required to model this. The protocol `TextPositionSpace` provides a way of mapping positions into and out of ranges. Here's what the implemenation looks like for UITextRanges
-
-```swift
-extension UITextView : TextPositionSpace {
-    public func decomposeRange(_ range: TextRange) -> (TextPosition, TextPosition) {
-        (range.start, range.end)
-    }
-
-    public func composeRange(_ components: (TextPosition, TextPosition)) -> TextRange? {
-        textRange(from: components.0, to: components.1)
-    }
-}
-```
+There are a variety of range/position models within AppKit, UIKit, and even between TextKit 1 and 2. Some abstraction is, unfortunately, required to model this. This should be all automatically handled by the `TextTokenizer` protocol **if** you are using `NSRange` or `NSTextRange`. The cross-platform `TextRange` type cannot do this without additional work on your part, typically by involving the text view.
 
 ## Contributing and Collaboration
 

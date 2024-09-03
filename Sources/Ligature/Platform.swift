@@ -3,8 +3,8 @@ import AppKit
 
 public typealias UserInterfaceLayoutDirection = NSUserInterfaceLayoutDirection
 
+@MainActor
 open class TextPosition: NSObject {
-
 }
 
 final class UTF16TextPosition: TextPosition {
