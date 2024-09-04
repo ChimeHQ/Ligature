@@ -1,11 +1,13 @@
-public final class MockTextTokenizer: TextTokenizer {
-	public enum Request: Hashable {
-		case position(Int, TextGranularity, TextDirection)
+public final class MockTextTokenizer<R: Equatable & Bounded>: TextTokenizer where R.Bound: Equatable {
+	public typealias TextRange = R
+
+	public enum Request: Equatable {
+		case position(Position, TextGranularity, TextDirection)
 	}
 
-	public enum Response: Hashable {
-		case position(Int?)
-		case rangeEnclosingPosition(Range<Int>?)
+	public enum Response: Equatable {
+		case position(Position?)
+		case rangeEnclosingPosition(R?)
 	}
 
 	public private(set) var requests: [Request] = []
@@ -18,7 +20,7 @@ public final class MockTextTokenizer: TextTokenizer {
 		return nil
 	}
 
-	public func position(from position: Int, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Int? {
+	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Position? {
 		requests.append(.position(position, granularity, direction))
 
 		switch responses.removeFirst() {
@@ -29,15 +31,15 @@ public final class MockTextTokenizer: TextTokenizer {
 		}
 	}
 
-	public func rangeEnclosingPosition(_ position: Int, with granularity: TextGranularity, inDirection direction: TextDirection) -> Range<Int>? {
+	public func rangeEnclosingPosition(_ position: Position, with granularity: TextGranularity, inDirection direction: TextDirection) -> R? {
 		return nil
 	}
 
-	public func isPosition(_ position: Int, atBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Bool {
+	public func isPosition(_ position: Position, atBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Bool {
 		return false
 	}
 
-	public func isPosition(_ position: Int, withinTextUnit granularity: TextGranularity, inDirection direction: TextDirection) -> Bool {
+	public func isPosition(_ position: Position, withinTextUnit granularity: TextGranularity, inDirection direction: TextDirection) -> Bool {
 		return false
 	}
 }
