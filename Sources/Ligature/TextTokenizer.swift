@@ -10,6 +10,7 @@ public protocol TextTokenizer<TextRange> {
 
 	typealias Position = TextRange.Bound
 	typealias RangeBuilder = (Position, Position) -> TextRange?
+	typealias PositionComparator = (Position, Position) -> Bool
 
 	func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Position?
 	func rangeEnclosingPosition(_ position: Position, with granularity: TextGranularity, inDirection direction: TextDirection) -> TextRange?
