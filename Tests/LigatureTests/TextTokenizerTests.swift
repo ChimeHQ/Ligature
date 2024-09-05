@@ -1,5 +1,5 @@
 import XCTest
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+#if os(macOS)
 import AppKit
 
 typealias TextView = NSTextView
@@ -22,7 +22,7 @@ import Ligature
 
 final class TextTokenizerTests: XCTestCase {
 	@MainActor
-	func testTextInputTokenizerFallback() throws {
+	func testIsPositionByWord() throws {
 		let input = TextView()
 		input.text = "abc def"
 
@@ -30,7 +30,7 @@ final class TextTokenizerTests: XCTestCase {
 
 		let start = input.beginningOfDocument
 		let middle = try XCTUnwrap(input.position(from: start, offset: 1))
-		let end = try XCTUnwrap(input.position(from: start, offset: 3))
+		let end = try XCTUnwrap(input.position(from: start, offset: 7))
 
 		XCTAssertFalse(tokenzier.isPosition(start, atBoundary: .word, inDirection: .storage(.forward)))
 		XCTAssertTrue(tokenzier.isPosition(start, atBoundary: .word, inDirection: .storage(.backward)))
@@ -40,5 +40,35 @@ final class TextTokenizerTests: XCTestCase {
 
 		XCTAssertTrue(tokenzier.isPosition(end, atBoundary: .word, inDirection: .storage(.forward)))
 		XCTAssertFalse(tokenzier.isPosition(end, atBoundary: .word, inDirection: .storage(.backward)))
+	}
+
+	@MainActor
+	func testPositionByCharacter() throws {
+		let input = TextView()
+		input.text = "abc def"
+
+		let tokenzier = TextInputStringTokenizer(textInput: input)
+
+		let start = input.beginningOfDocument
+		let end = try XCTUnwrap(input.position(from: start, offset: 7))
+
+		XCTAssertNil(tokenzier.position(from: start, toBoundary: .character, inDirection: .storage(.backward)))
+		XCTAssertNil(tokenzier.position(from: start, toBoundary: .character, inDirection: .layout(.left)))
+
+		let pos1 = try XCTUnwrap(tokenzier.position(from: start, toBoundary: .character, inDirection: .storage(.forward)))
+		XCTAssertEqual(input.offset(from: start, to: pos1), 1)
+
+		let pos2 = try XCTUnwrap(tokenzier.position(from: start, toBoundary: .character, inDirection: .layout(.right)))
+		XCTAssertEqual(input.offset(from: start, to: pos2), 1)
+
+		XCTAssertNil(tokenzier.position(from: end, toBoundary: .character, inDirection: .storage(.forward)))
+		XCTAssertNil(tokenzier.position(from: end, toBoundary: .character, inDirection: .layout(.right)))
+
+		let pos3 = try XCTUnwrap(tokenzier.position(from: end, toBoundary: .character, inDirection: .storage(.backward)))
+		XCTAssertEqual(input.offset(from: start, to: pos3), 6)
+
+		let pos4 = try XCTUnwrap(tokenzier.position(from: end, toBoundary: .character, inDirection: .layout(.left)))
+		XCTAssertEqual(input.offset(from: start, to: pos4), 6)
+
 	}
 }

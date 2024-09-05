@@ -2,21 +2,6 @@ import Foundation
 #if os(macOS)
 import AppKit
 
-extension NSTextView {
-	func isForwardDirection(_ direction: TextDirection) -> Bool {
-		switch direction {
-		case .storage(.forward):
-			return true
-		case .layout(.right):
-			return userInterfaceLayoutDirection == .leftToRight
-		case .layout(.left):
-			return userInterfaceLayoutDirection == .rightToLeft
-		default:
-			return false
-		}
-	}
-}
-
 @MainActor
 public final class TextInputStringTokenizer {
 	private let textInput: NSTextView
@@ -30,6 +15,25 @@ extension TextInputStringTokenizer : TextTokenizer {
 	public typealias Position = TextPosition
 
 	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Position? {
+		guard let position = position as? UTF16TextPosition else { return nil }
+
+		let maximum = self.textInput.textStorage?.length ?? 0
+		let forward = direction.textStorageDirection(with: textInput.userInterfaceLayoutDirection) == .forward
+
+		switch (granularity, direction) {
+		case (.character, .storage(.forward)):
+			return position.offsetPosition(by: 1, maximum: maximum)
+		case (.character, .storage(.backward)):
+			return position.offsetPosition(by: -1, maximum: maximum)
+
+		case (.character, .layout(.left)), (.character, .layout(.right)):
+			let offset = forward ? 1 : -1
+
+			return position.offsetPosition(by: offset, maximum: maximum)
+		default:
+			break
+		}
+
 		return nil
 	}
 	
@@ -41,7 +45,7 @@ extension TextInputStringTokenizer : TextTokenizer {
         guard let position = position as? UTF16TextPosition else { return false }
 
         let string = (textInput.attributedString().string as NSString)
-        let forward = textInput.isForwardDirection(direction)
+		let forward = direction.textStorageDirection(with: textInput.userInterfaceLayoutDirection) == .forward
         let start = forward ? max(position.value - 1, 0) : 0
         let end = forward ? string.length : min(position.value + 1, string.length)
         let options: NSString.EnumerationOptions

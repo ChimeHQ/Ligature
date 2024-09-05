@@ -13,6 +13,21 @@ final class UTF16TextPosition: TextPosition {
 	init(value: Int) {
 		self.value = value
 	}
+
+	func offsetPosition(by amount: Int, maximum: Int) -> UTF16TextPosition? {
+		let new = value + amount
+		if new < 0 || new > maximum {
+			return nil
+		}
+
+		return UTF16TextPosition(value: new)
+	}
+}
+
+extension UTF16TextPosition {
+	public override var debugDescription: String {
+		String(value)
+	}
 }
 
 @MainActor
@@ -32,6 +47,14 @@ open class TextRange: NSObject {
 
 	var isEmpty: Bool {
 		return true
+	}
+}
+
+extension TextRange {
+	open override var debugDescription: String {
+		MainActor.assumeIsolated {
+			"{\(start.debugDescription), \(end.debugDescription)}"
+		}
 	}
 }
 
@@ -113,7 +136,7 @@ extension NSTextView {
 	}
 
 	public func textRange(from fromPosition: TextPosition, to toPosition: TextPosition) -> TextRange? {
-		nil
+		TextRange(start: fromPosition, end: toPosition)
 	}
 
 	public func position(from position: TextPosition, offset: Int) -> TextPosition? {
