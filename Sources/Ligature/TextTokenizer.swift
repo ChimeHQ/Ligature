@@ -24,40 +24,24 @@ extension UITextInputStringTokenizer : TextTokenizer {}
 #endif
 
 extension TextTokenizer {
-	public func range(
+	public func range<RangeCalculator: TextRangeCalculating>(
 		from range: TextRange,
 		to granularity: TextGranularity,
 		in direction: TextDirection,
-		rangeBuilder: RangeBuilder
-	) -> TextRange? {
-		let components = (range.lowerBound, range.upperBound)
-
-		guard
-			let start = position(from: components.0, toBoundary: granularity, inDirection: direction),
-			let end = position(from: components.1, toBoundary: granularity, inDirection: direction)
-		else {
+		rangeCalculator: RangeCalculator
+	) -> TextRange? where RangeCalculator.TextRange == TextRange {
+		guard let start = position(from: range.lowerBound, toBoundary: granularity, inDirection: direction) else {
 			return nil
 		}
 
-		return rangeBuilder(start, end)
-	}
-}
+		if rangeCalculator.compare(range.lowerBound, to: range.upperBound) == .orderedSame {
+			return rangeCalculator.textRange(from: start, to: start)
+		}
 
-extension TextTokenizer where TextRange == NSRange {
-	public func range(from range: TextRange, to granularity: TextGranularity, in direction: TextDirection) -> TextRange? {
-		self.range(from: range, to: granularity, in: direction, rangeBuilder: { NSRange($0..<$1) })
-	}
-}
+		guard let end = position(from: range.upperBound, toBoundary: granularity, inDirection: direction) else {
+			return nil
+		}
 
-extension TextTokenizer where TextRange == Range<Int> {
-	public func range(from range: TextRange, to granularity: TextGranularity, in direction: TextDirection) -> TextRange? {
-		self.range(from: range, to: granularity, in: direction, rangeBuilder: { $0..<$1 })
-	}
-}
-
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, macCatalyst 15.0, *)
-extension TextTokenizer where TextRange == NSTextRange {
-	public func range(from range: TextRange, to granularity: TextGranularity, in direction: TextDirection) -> TextRange? {
-		self.range(from: range, to: granularity, in: direction, rangeBuilder: { NSTextRange(location: $0, end: $1) })
+		return rangeCalculator.textRange(from: start, to: end)
 	}
 }

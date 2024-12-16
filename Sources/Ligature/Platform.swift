@@ -7,6 +7,7 @@ public typealias UserInterfaceLayoutDirection = NSUserInterfaceLayoutDirection
 open class TextPosition: NSObject {
 }
 
+@MainActor
 final class UTF16TextPosition: TextPosition {
 	let value: Int
 
@@ -32,8 +33,8 @@ extension UTF16TextPosition {
 
 @MainActor
 open class TextRange: NSObject {
-	var start: TextPosition
-	var end: TextPosition
+	let start: TextPosition
+	let end: TextPosition
 
 	public override init() {
 		self.start = UTF16TextPosition(value: 0)
@@ -43,6 +44,11 @@ open class TextRange: NSObject {
 	init(start: TextPosition, end: TextPosition) {
 		self.start = start
 		self.end = end
+	}
+
+	init(_ range: NSRange) {
+		self.start = UTF16TextPosition(value: range.lowerBound)
+		self.end = UTF16TextPosition(value: range.upperBound)
 	}
 
 	var isEmpty: Bool {
@@ -55,6 +61,24 @@ extension TextRange {
 		MainActor.assumeIsolated {
 			"{\(start.debugDescription), \(end.debugDescription)}"
 		}
+	}
+
+	open override var description: String {
+		debugDescription
+	}
+}
+
+extension NSRange {
+	@MainActor
+	public init?(_ textRange: TextRange, textView: NSTextView) {
+		let location = textView.offset(from: textView.beginningOfDocument, to: textRange.start)
+		let length = textView.offset(from: textRange.start, to: textRange.end)
+
+		if location < 0 || length < 0 {
+			return nil
+		}
+
+		self.init(location: location, length: length)
 	}
 }
 
@@ -130,67 +154,6 @@ public struct TextDirection : RawRepresentable, Hashable, Sendable {
 
 typealias TextView = NSTextView
 
-extension NSTextView {
-	public var beginningOfDocument: TextPosition {
-		UTF16TextPosition(value: 0)
-	}
-
-	public func textRange(from fromPosition: TextPosition, to toPosition: TextPosition) -> TextRange? {
-		TextRange(start: fromPosition, end: toPosition)
-	}
-
-	public func position(from position: TextPosition, offset: Int) -> TextPosition? {
-		guard let utf16Position = position as? UTF16TextPosition else { return nil }
-
-		return UTF16TextPosition(value: utf16Position.value + offset)
-	}
-
-	public func position(from position: TextPosition, in direction: TextLayoutDirection, offset: Int) -> TextPosition? {
-		guard let utf16Position = position as? UTF16TextPosition else { return nil }
-
-		let start = utf16Position.value
-
-		switch (direction, userInterfaceLayoutDirection) {
-		case (.left, .leftToRight), (.right, .rightToLeft):
-			return UTF16TextPosition(value: start + offset)
-		case (.right, .leftToRight), (.left, .rightToLeft):
-			return UTF16TextPosition(value: start - offset)
-		default:
-			return nil
-		}
-	}
-
-	public func compare(_ position: TextPosition, to other: TextPosition) -> ComparisonResult {
-		guard
-			let a = position as? UTF16TextPosition,
-			let b = other as? UTF16TextPosition
-		else {
-			return .orderedSame
-		}
-
-		if a.value < b.value {
-			return .orderedAscending
-		}
-
-		if a.value > b.value {
-			return .orderedDescending
-		}
-
-		return .orderedSame
-	}
-
-	public func offset(from: TextPosition, to toPosition: TextPosition) -> Int {
-		guard
-			let a = from as? UTF16TextPosition,
-			let b = toPosition as? UTF16TextPosition
-		else {
-			return 0
-		}
-
-		return b.value - a.value
-	}
-}
-
 #elseif canImport(UIKit)
 import UIKit
 
@@ -203,44 +166,6 @@ public typealias TextDirection = UITextDirection
 public typealias TextInputStringTokenizer = UITextInputStringTokenizer
 public typealias UserInterfaceLayoutDirection = UIUserInterfaceLayoutDirection
 
+typealias TextView = UITextView
+
 #endif
-
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
-@available(watchOS, unavailable)
-extension NSTextSelection.Granularity {
-	public init(_ granularity: TextGranularity) {
-		switch granularity {
-		case .character:
-			self = .character
-		case .paragraph:
-			self = .paragraph
-		case .word:
-			self = .word
-		case .sentence:
-			self = .sentence
-		case .line:
-			self = .line
-		case .document:
-			self = .paragraph
-		@unknown default:
-			self = .character
-		}
-	}
-
-	public var textGranularity: TextGranularity {
-		switch self {
-		case .character:
-			.character
-		case .line:
-			.line
-		case .paragraph:
-			.paragraph
-		case .sentence:
-			.sentence
-		case .word:
-			.word
-		@unknown default:
-			.character
-		}
-	}
-}

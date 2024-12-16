@@ -8,12 +8,9 @@
 </div>
 
 # Ligature
-A Swift package to aid in text selection, grouping, indentation, and manipulation.
+A Swift package to aid in text selection, grouping, and manipulation.
 
-Ligature includes aliases and implementations as needed to make parts of the UIKit and AppKit text interfaces source-compatible.
-
-> [!WARNING]
-> This is currently very WIP.
+Ligature includes aliases and implementations as needed to make parts of the UIKit and AppKit text interfaces source-compatible. The core types actually go futher than this and should be fully text system-agnostic.
 
 You also might be interested in [Glyph][], a TextKit 1/2 abstraction system, as well as general AppKit/UIKit stuff like [NSUI][] or [KeyCodes][].
 
@@ -32,6 +29,9 @@ dependencies: [
 ## Usage
 
 The core protocol for the tokenization functionality is `TextTokenizer`. It is a little more abstract than `UITextInputTokenizer`, but ultimately compatible. With UIKit, `TextInputStringTokenizer` is just a typealias for `UITextInputStringTokenizer`. Ligature provides an implementation for use with AppKit.
+
+> [!WARNING]
+> While quite usable, there are features the `TextTokenizer` API supports that are not fully implemented by the AppKit implementation.
 
 ```swift
 // on UIKit
@@ -52,18 +52,17 @@ typealias TextDirection = UITextDirection
 typealias UserInterfaceLayoutDirection = UIUserInterfaceLayoutDirection
 ```
 
-There are a variety of range/position models within AppKit, UIKit, and even between TextKit 1 and 2. Some abstraction is, unfortunately, required to model this. This should be all automatically handled by the `TextTokenizer` protocol **if** you are using `NSRange` or `NSTextRange`. The cross-platform `TextRange` type cannot do this without additional work on your part, typically by involving the text view.
+There are a variety of range/position models within AppKit, UIKit, and even between TextKit 1 and 2. Some abstraction is, unfortunately, required to model this, and that is not free. If it is important to operate within `NSRange` values, you can use `UTF16CodePointTextViewTextTokenizer` directly.
 
 ## Contributing and Collaboration
 
-I would love to hear from you! Issues or pull requests work great. Both a [Matrix space][matrix] and [Discord][discord] are available for live help, but I have a strong bias towards answering in the form of documentation. You can also find me on [mastodon](https://mastodon.social/@mattiem).
+I would love to hear from you! Issues or pull requests work great. Both a [Matrix space][matrix] and [Discord][discord] are available for live help, but I have a strong bias towards answering in the form of documentation. You can also find me [here](https://www.massicotte.org/about).
 
 I prefer collaboration, and would love to find ways to work together if you have a similar project.
 
 I prefer indentation with tabs for improved accessibility. But, I'd rather you use the system you want and make a PR than hesitate because of whitespace.
 
 By participating in this project you agree to abide by the [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
-
 [build status]: https://github.com/ChimeHQ/Ligature/actions
 [build status badge]: https://github.com/ChimeHQ/Ligature/workflows/CI/badge.svg
 [platforms]: https://swiftpackageindex.com/ChimeHQ/Ligature
