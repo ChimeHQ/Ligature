@@ -59,8 +59,8 @@ public struct UTF16CodePointTextViewTextTokenizer {
 }
 
 extension UTF16CodePointTextViewTextTokenizer {
-	public func location(for position: Position) -> CGFloat? {
-		textView.boundingRect(for: NSRange(position..<position))?.minX
+	public func boundingRect(for range: NSRange) -> CGRect? {
+		textView.boundingRect(for: range)
 	}
 
 	/// A variant of position(from:toBoundary:inDirection:) that can take alignment into account.
@@ -127,7 +127,7 @@ extension UTF16CodePointTextViewTextTokenizer {
 			return self.position(from: position, toBoundary: granularity, inDirection: resolvedDir, alignment: alignment)
 		case (.character, .layout(.down)):
 			guard
-				let alignment = alignment ?? location(for: position),
+				let alignment = alignment ?? boundingRect(for: NSRange(position..<position))?.origin.x,
 				let nextFragment = textView.textContainer?.lineFragment(for: position, offset: 1)
 			else {
 				return nil
@@ -138,7 +138,7 @@ extension UTF16CodePointTextViewTextTokenizer {
 			// because we are iterating backwards, we have to advance by one character so we are sure we
 			// include the fragment that "position" is in
 			guard
-				let alignment = alignment ?? location(for: position),
+				let alignment = alignment ?? boundingRect(for: NSRange(position..<position))?.origin.x,
 				let start = self.position(from: position, toBoundary: .character, inDirection: .storage(.forward)),
 				let nextFragment = textView.textContainer?.lineFragment(for: start, offset: -1)
 			else {
