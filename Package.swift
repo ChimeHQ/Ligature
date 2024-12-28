@@ -15,7 +15,7 @@ let package = Package(
 		.library(name: "Ligature", targets: ["Ligature"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/ChimeHQ/Glyph", revision: "dce014c6ee2564c44e38c222a3fdc6eef76892d6"),
+		.package(url: "https://github.com/ChimeHQ/Glyph", revision: "63cc672cd1bcc408b3a5158816985c82308e5f83"),
 	],
 	targets: [
 		.target(name: "Ligature", dependencies: ["Glyph"]),
