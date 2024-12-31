@@ -16,18 +16,19 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: macOS-14
+    timeout-minutes: 30
+    runs-on: macOS-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.1.app
     strategy:
       matrix:
         destination:
           - "platform=macOS"
           - "platform=macOS,variant=Mac Catalyst"
-          - "platform=iOS Simulator,name=iPhone 12"
+          - "platform=iOS Simulator,name=iPhone 16"
           - "platform=tvOS Simulator,name=Apple TV"
           - "platform=visionOS Simulator,name=Apple Vision Pro"
-          
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
