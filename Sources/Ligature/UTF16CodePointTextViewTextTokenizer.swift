@@ -27,16 +27,27 @@ struct Line {
 	let contentsEnd: Int
 }
 
+#if os(macOS) || os(iOS) || os(visionOS)
 @MainActor
 public struct UTF16CodePointTextViewTextTokenizer {
-	private let textView: NSTextView
+	private let textView: TextView
 
+#if os(macOS)
 	public init(textView: NSTextView) {
 		self.textView = textView
 	}
+	#else
+	public init(textView: UITextView) {
+		self.textView = textView
+	}
+	#endif
 
 	private var storage: NSTextStorage? {
 		textView.textStorage
+	}
+
+	private var textContainer: NSTextContainer? {
+		textView.textContainer
 	}
 
 	private var maximum: Int {
@@ -96,7 +107,7 @@ extension UTF16CodePointTextViewTextTokenizer {
 
 			return charRange.lowerBound
 		case (.line, .storage(.forward)):
-			guard let fragment = textView.textContainer?.lineFragment(for: position, offset: 0) else {
+			guard let fragment = textContainer?.lineFragment(for: position, offset: 0) else {
 				return nil
 			}
 
@@ -104,7 +115,7 @@ extension UTF16CodePointTextViewTextTokenizer {
 
 			return line(within: fragmentRange)?.contentsEnd
 		case (.line, .storage(.backward)):
-			guard let fragment = textView.textContainer?.lineFragment(for: position, offset: 0) else {
+			guard let fragment = textContainer?.lineFragment(for: position, offset: 0) else {
 				return nil
 			}
 
@@ -125,27 +136,29 @@ extension UTF16CodePointTextViewTextTokenizer {
 			let resolvedDir: TextDirection = rtl ? .storage(.backward) : .storage(.forward)
 
 			return self.position(from: position, toBoundary: granularity, inDirection: resolvedDir, alignment: alignment)
+#if os(macOS)
 		case (.character, .layout(.down)):
 			guard
 				let alignment = alignment ?? boundingRect(for: NSRange(position..<position))?.origin.x,
-				let nextFragment = textView.textContainer?.lineFragment(for: position, offset: 1)
+				let nextFragment = textContainer?.lineFragment(for: position, offset: 1)
 			else {
 				return nil
 			}
 
-			return textView.characterIndexForInsertion(at: NSPoint(x: alignment, y: nextFragment.0.midY))
+			return textView.characterIndexForInsertion(at: CGPoint(x: alignment, y: nextFragment.0.midY))
 		case (.character, .layout(.up)):
 			// because we are iterating backwards, we have to advance by one character so we are sure we
 			// include the fragment that "position" is in
 			guard
 				let alignment = alignment ?? boundingRect(for: NSRange(position..<position))?.origin.x,
 				let start = self.position(from: position, toBoundary: .character, inDirection: .storage(.forward)),
-				let nextFragment = textView.textContainer?.lineFragment(for: start, offset: -1)
+				let nextFragment = textContainer?.lineFragment(for: start, offset: -1)
 			else {
 				return nil
 			}
 
-			return textView.characterIndexForInsertion(at: NSPoint(x: alignment, y: nextFragment.0.midY))
+			return textView.characterIndexForInsertion(at: CGPoint(x: alignment, y: nextFragment.0.midY))
+#endif
 		default:
 			break
 		}
@@ -196,6 +209,8 @@ extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
 			options = [.byParagraphs]
 		case .document:
 			return false
+		@unknown default:
+			return false
 		}
 
 		var atBoundary = false
@@ -223,3 +238,4 @@ extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
 		return false
 	}
 }
+#endif
