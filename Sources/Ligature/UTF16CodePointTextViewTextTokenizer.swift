@@ -4,6 +4,8 @@ import AppKit
 import UIKit
 #endif
 
+#if os(macOS) || os(iOS) || os(visionOS)
+
 import Glyph
 
 extension NSAttributedString {
@@ -27,7 +29,6 @@ struct Line {
 	let contentsEnd: Int
 }
 
-#if os(macOS) || os(iOS) || os(visionOS)
 @MainActor
 public struct UTF16CodePointTextViewTextTokenizer {
 	private let textView: TextView
