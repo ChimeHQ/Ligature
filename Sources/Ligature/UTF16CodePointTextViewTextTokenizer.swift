@@ -88,7 +88,7 @@ extension UTF16CodePointTextViewTextTokenizer {
 
 			// moving to the very last position is always allowed and requires no checks
 			if position + 1 >= maximum {
-				return maximum
+				return nil
 			}
 
 			let pos = min(position + 1, maximum - 1)
@@ -102,7 +102,11 @@ extension UTF16CodePointTextViewTextTokenizer {
 		case (.character, .storage(.backward)):
 			guard let storage else { return position }
 
-			let pos = max(position - 1, 0)
+			if position <= 0 {
+				return nil
+			}
+
+			let pos = position - 1
 
 			let charRange = (storage.string as NSString).rangeOfComposedCharacterSequence(at: pos)
 
