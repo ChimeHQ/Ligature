@@ -201,6 +201,20 @@ extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
 		let end = forward ? maximum - 1 : min(position + 1, maximum - 1)
 		let options: NSString.EnumerationOptions
 
+		// shortcuts - this are always at boundaries by definition
+		switch direction {
+		case .storage(.forward):
+			if position == maximum {
+				return true
+			}
+		case .storage(.backward):
+			if position <= 0 {
+				return true
+			}
+		default:
+			break
+		}
+
 		switch granularity {
 		case .character:
 			options = [.byComposedCharacterSequences]
