@@ -7,6 +7,7 @@ import UIKit
 #if os(macOS) || os(iOS) || os(visionOS)
 
 import Glyph
+import Rearrange
 
 extension NSAttributedString {
 	func writingDirection(at index: Int) -> NSWritingDirection {

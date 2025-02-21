@@ -1,3 +1,5 @@
+import Rearrange
+
 #if os(macOS)
 import AppKit
 #elseif canImport(UIKit)

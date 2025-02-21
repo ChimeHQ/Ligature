@@ -1,3 +1,5 @@
+import Rearrange
+
 public final class MockTextTokenizer<R: Equatable & Bounded>: TextTokenizer where R.Bound: Equatable {
 	public typealias TextRange = R
 

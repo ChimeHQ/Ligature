@@ -1,46 +1,11 @@
 import Foundation
 
-public protocol TextRangeCalculating<TextRange> {
-	associatedtype TextRange: Bounded
-
-	typealias Position = TextRange.Bound
-
-	@MainActor
-	var beginningOfDocument: Position { get }
-	@MainActor
-	var endOfDocument: Position { get }
-
-	@MainActor
-	func textRange(from fromPosition: Position, to toPosition: Position) -> TextRange?
-	@MainActor
-	func position(from position: Position, offset: Int) -> Position?
-	@MainActor
-	func position(from position: Position, in direction: TextLayoutDirection, offset: Int) -> Position?
-	@MainActor
-	func offset(from: Position, to toPosition: Position) -> Int
-
-	@MainActor
-	func compare(_ position: Position, to other: Position) -> ComparisonResult
-}
-
-extension TextRangeCalculating {
-	@MainActor
-	public func textRange(from range: NSRange) -> TextRange? {
-		guard
-			let start = position(from: beginningOfDocument, offset: range.location),
-			let end = position(from: start, offset: range.length)
-		else {
-			return nil
-		}
-
-		return textRange(from: start, to: end)
-	}
-}
+import Rearrange
 
 #if os(macOS)
 import AppKit
 
-extension NSTextView: TextRangeCalculating {
+extension NSTextView: @preconcurrency @retroactive TextRangeCalculating {
 	public var beginningOfDocument: TextPosition {
 		UTF16TextPosition(value: 0)
 	}
@@ -108,21 +73,7 @@ extension NSTextView: TextRangeCalculating {
 #elseif canImport(UIKit)
 import UIKit
 
-extension UITextView: TextRangeCalculating {
+extension UITextView : @preconcurrency @retroactive TextRangeCalculating {
 }
 
 #endif
-
-extension TextRangeCalculating {
-	@MainActor
-	public func textRange(offseting range: TextRange, by offset: Int) -> TextRange? {
-		guard
-			let start = position(from: range.lowerBound, offset: offset),
-			let end = position(from: range.upperBound, offset: offset)
-		else {
-			return nil
-		}
-
-		return textRange(from: start, to: end)
-	}
-}

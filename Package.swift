@@ -16,9 +16,10 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/ChimeHQ/Glyph", branch: "main"),
+		.package(url: "https://github.com/ChimeHQ/Rearrange", branch: "main"),
 	],
 	targets: [
-		.target(name: "Ligature", dependencies: ["Glyph"]),
+		.target(name: "Ligature", dependencies: ["Glyph", "Rearrange"]),
 		.testTarget(name: "LigatureTests", dependencies: ["Ligature"]),
 	]
 )
