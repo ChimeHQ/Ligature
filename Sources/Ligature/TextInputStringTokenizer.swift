@@ -14,13 +14,14 @@ public struct TextInputStringTokenizer {
 extension TextInputStringTokenizer : TextTokenizer {
 	public typealias Position = TextPosition
 
-	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Position? {
+	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection, alignment: CGFloat?) -> Position? {
 		guard let position = position as? UTF16TextPosition else { return nil }
 
 		return internalTokenizer.position(
 			from: position.value,
 			toBoundary: granularity,
-			inDirection: direction
+			inDirection: direction,
+			alignment: alignment
 		)
 		.map { UTF16TextPosition(value: $0) }
 	}

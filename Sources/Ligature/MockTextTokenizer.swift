@@ -1,3 +1,4 @@
+import Foundation
 import Rearrange
 
 public final class MockTextTokenizer<R: Equatable & Bounded>: TextTokenizer where R.Bound: Equatable {
@@ -22,7 +23,7 @@ public final class MockTextTokenizer<R: Equatable & Bounded>: TextTokenizer wher
 		return nil
 	}
 
-	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection) -> Position? {
+	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection, alignment: CGFloat?) -> Position? {
 		requests.append(.position(position, granularity, direction))
 
 		switch responses.removeFirst() {
