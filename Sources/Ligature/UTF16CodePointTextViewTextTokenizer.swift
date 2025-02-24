@@ -75,6 +75,11 @@ extension UTF16CodePointTextViewTextTokenizer {
 	public func boundingRect(for range: NSRange) -> CGRect? {
 		textView.boundingRect(for: range)
 	}
+	
+}
+
+extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
+	public typealias TextRange = NSRange
 
 	/// A variant of position(from:toBoundary:inDirection:) that can take alignment into account.
 	public func position(
@@ -170,18 +175,6 @@ extension UTF16CodePointTextViewTextTokenizer {
 		}
 
 		return nil
-	}
-}
-
-extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
-	public typealias TextRange = NSRange
-
-	public func position(
-		from position: Position,
-		toBoundary granularity: TextGranularity,
-		inDirection direction: TextDirection
-	) -> Position? {
-		self.position(from: position, toBoundary: granularity, inDirection: direction, alignment: nil)
 	}
 
 	public func rangeEnclosingPosition(
