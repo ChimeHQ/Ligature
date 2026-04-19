@@ -78,7 +78,7 @@ extension UTF16CodePointTextViewTextTokenizer {
 	
 }
 
-extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
+extension UTF16CodePointTextViewTextTokenizer: TextTokenizer {
 	public typealias TextRange = NSRange
 
 	/// A variant of position(from:toBoundary:inDirection:) that can take alignment into account.
@@ -92,12 +92,15 @@ extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
 		case (.character, .storage(.forward)):
 			guard let storage else { return position }
 
-			// moving to the very last position is always allowed and requires no checks
-			if position + 1 >= maximum {
+			if position >= maximum {
 				return nil
 			}
 
-			let pos = min(position + 1, maximum - 1)
+			let pos = position + 1
+			if pos == maximum {
+				// character composition doesn't have to be checked in this case
+				return maximum
+			}
 
 			let charRange = (storage.string as NSString).rangeOfComposedCharacterSequence(at: pos)
 			if charRange.lowerBound == pos {
@@ -113,6 +116,9 @@ extension UTF16CodePointTextViewTextTokenizer : TextTokenizer {
 			}
 
 			let pos = position - 1
+			if pos == 0 {
+				return 0
+			}
 
 			let charRange = (storage.string as NSString).rangeOfComposedCharacterSequence(at: pos)
 
