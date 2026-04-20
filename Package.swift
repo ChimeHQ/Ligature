@@ -15,8 +15,8 @@ let package = Package(
 		.library(name: "Ligature", targets: ["Ligature"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/ChimeHQ/Glyph", branch: "main"),
-		.package(url: "https://github.com/ChimeHQ/Rearrange", branch: "main"),
+		.package(url: "https://github.com/ChimeHQ/Glyph", from: "0.1.0"),
+		.package(url: "https://github.com/ChimeHQ/Rearrange", from: "2.1.0"),
 	],
 	targets: [
 		.target(name: "Ligature", dependencies: ["Glyph", "Rearrange"]),

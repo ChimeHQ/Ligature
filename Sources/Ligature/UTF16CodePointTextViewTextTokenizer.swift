@@ -164,12 +164,9 @@ extension UTF16CodePointTextViewTextTokenizer: TextTokenizer {
 
 			return textView.characterIndexForInsertion(at: CGPoint(x: alignment, y: nextFragment.0.midY))
 		case (.character, .layout(.up)):
-			// because we are iterating backwards, we have to advance by one character so we are sure we
-			// include the fragment that "position" is in
 			guard
 				let alignment = alignment ?? boundingRect(for: NSRange(position..<position))?.origin.x,
-				let start = self.position(from: position, toBoundary: .character, inDirection: .storage(.forward)),
-				let nextFragment = textContainer?.lineFragment(for: start, offset: -1)
+				let nextFragment = textContainer?.lineFragment(for: position, offset: -1)
 			else {
 				return nil
 			}
