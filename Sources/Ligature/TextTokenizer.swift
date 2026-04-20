@@ -1,6 +1,6 @@
 import Rearrange
 
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 import AppKit
 #elseif canImport(UIKit)
 import UIKit

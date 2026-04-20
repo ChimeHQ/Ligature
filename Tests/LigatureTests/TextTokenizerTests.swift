@@ -40,14 +40,14 @@ final class TextTokenizerTests: XCTestCase {
 		let pos1 = try XCTUnwrap(tokenzier.position(from: start, toBoundary: .character, inDirection: .storage(.forward)))
 		XCTAssertEqual(input.offset(from: start, to: pos1), 1)
 
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 		// why does this produce a nil on iOS?
 		let pos2 = try XCTUnwrap(tokenzier.position(from: start, toBoundary: .character, inDirection: .layout(.right)))
 		XCTAssertEqual(input.offset(from: start, to: pos2), 1)
 #endif
 
 		XCTAssertNil(tokenzier.position(from: end, toBoundary: .character, inDirection: .storage(.forward)))
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 		// why does this *not* produce a nil on iOS?
 		XCTAssertNil(tokenzier.position(from: end, toBoundary: .character, inDirection: .layout(.right)))
 #endif

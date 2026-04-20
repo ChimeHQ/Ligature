@@ -1,6 +1,6 @@
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 import AppKit
-#elseif canImport(UIKit)
+#elseif os(iOS) || os(tvOS) || os(visionOS)
 import UIKit
 #endif
 

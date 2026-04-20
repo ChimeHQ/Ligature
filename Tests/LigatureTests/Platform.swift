@@ -1,4 +1,4 @@
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 import AppKit
 
 typealias TextView = NSTextView

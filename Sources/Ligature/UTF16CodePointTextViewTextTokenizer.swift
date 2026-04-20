@@ -1,10 +1,10 @@
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 import AppKit
 #elseif canImport(UIKit)
 import UIKit
 #endif
 
-#if os(macOS) || os(iOS) || os(visionOS)
+#if os(macOS) || os(iOS) || os(tvOS) || os(visionOS)
 
 import Glyph
 import Rearrange
@@ -34,15 +34,15 @@ struct Line {
 public struct UTF16CodePointTextViewTextTokenizer {
 	private let textView: TextView
 
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 	public init(textView: NSTextView) {
 		self.textView = textView
 	}
-	#else
+#else
 	public init(textView: UITextView) {
 		self.textView = textView
 	}
-	#endif
+#endif
 
 	private var storage: NSTextStorage? {
 		textView.textStorage
@@ -153,7 +153,7 @@ extension UTF16CodePointTextViewTextTokenizer: TextTokenizer {
 			let resolvedDir: TextDirection = rtl ? .storage(.backward) : .storage(.forward)
 
 			return self.position(from: position, toBoundary: granularity, inDirection: resolvedDir, alignment: alignment)
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 		case (.character, .layout(.down)):
 			guard
 				let alignment = alignment ?? boundingRect(for: NSRange(position..<position))?.origin.x,
