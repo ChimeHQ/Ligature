@@ -10,7 +10,7 @@ public struct SourceTokenizer<FallbackTokenzier: TextTokenizer> {
 	}
 }
 
-extension SourceTokenizer : TextTokenizer {
+extension SourceTokenizer: TextTokenizer {
 	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection, alignment: CGFloat?) -> Position? {
 		return fallbackTokenzier.position(from: position, toBoundary: granularity, inDirection: direction, alignment: alignment)
 	}

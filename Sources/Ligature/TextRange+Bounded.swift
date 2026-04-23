@@ -8,7 +8,7 @@ import Rearrange
 
 #if os(macOS) || canImport(UIKit)
 
-extension TextRange : Rearrange.Bounded {
+extension TextRange: Rearrange.Bounded {
 	public nonisolated var lowerBound: TextPosition {
 		MainActor.assumeIsolated { start }
 	}
