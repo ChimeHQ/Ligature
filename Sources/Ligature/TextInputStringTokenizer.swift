@@ -11,7 +11,7 @@ public struct TextInputStringTokenizer {
 	}
 }
 
-extension TextInputStringTokenizer : TextTokenizer {
+extension TextInputStringTokenizer: TextTokenizer {
 	public typealias Position = TextPosition
 
 	public func position(from position: Position, toBoundary granularity: TextGranularity, inDirection direction: TextDirection, alignment: CGFloat?) -> Position? {
