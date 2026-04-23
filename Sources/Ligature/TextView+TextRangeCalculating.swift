@@ -61,7 +61,9 @@ extension NSTextView: @preconcurrency @retroactive TextRangeCalculating {
 	public func offset(from: TextPosition, to toPosition: TextPosition) -> Int {
 		guard
 			let a = from as? UTF16TextPosition,
-			let b = toPosition as? UTF16TextPosition
+			let b = toPosition as? UTF16TextPosition,
+			a.value != NSNotFound,
+			b.value != NSNotFound
 		else {
 			return 0
 		}
