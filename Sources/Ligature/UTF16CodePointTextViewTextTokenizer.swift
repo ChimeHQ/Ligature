@@ -32,15 +32,20 @@ struct Line {
 
 @MainActor
 public struct UTF16CodePointTextViewTextTokenizer {
+	public static nonisolated let defaultWordBoundaries: CharacterSet  = .alphanumerics
+
 	private let textView: TextView
+	private let wordBoundarySet: CharacterSet
 
 #if os(macOS) && !targetEnvironment(macCatalyst)
-	public init(textView: NSTextView) {
+	public init(textView: NSTextView, wordBoundaries: CharacterSet = Self.defaultWordBoundaries) {
 		self.textView = textView
+		self.wordBoundarySet = wordBoundaries
 	}
 #else
-	public init(textView: UITextView) {
+	public init(textView: UITextView, wordBoundaries: CharacterSet = Self.defaultWordBoundaries) {
 		self.textView = textView
+		self.wordBoundarySet = wordBoundaries
 	}
 #endif
 
@@ -139,6 +144,49 @@ extension UTF16CodePointTextViewTextTokenizer: TextTokenizer {
 			let fragmentRange = fragment.1
 
 			return line(within: fragmentRange)?.start
+		case (.word, .storage(.forward)):
+			guard let storage else { return position }
+
+			if position >= maximum {
+				return nil
+			}
+
+			let pos = position + 1
+
+			if pos == maximum {
+				return maximum
+			}
+
+			let set = wordBoundarySet.inverted
+			let range = NSRange(pos..<maximum)
+			let charRange = (storage.string as NSString).rangeOfCharacter(from: set, range: range)
+
+			if charRange.lowerBound == NSNotFound {
+				return maximum
+			}
+
+			return charRange.lowerBound
+		case (.word, .storage(.backward)):
+			guard let storage else { return position }
+
+			if position <= 0 {
+				return nil
+			}
+
+			let pos = position - 1
+			if pos == 0 {
+				return 0
+			}
+
+			let set = wordBoundarySet.inverted
+			let range = NSRange(0..<pos)
+			let charRange = (storage.string as NSString).rangeOfCharacter(from: set, options: .backwards, range: range)
+
+			if charRange.lowerBound == NSNotFound {
+				return 0
+			}
+
+			return charRange.upperBound
 		case (_, .layout(.left)):
 			guard let storage else { return position }
 
